@@ -1,0 +1,49 @@
+﻿services:
+  api:
+    build: .
+    container_name: salary-predictor-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://salaryuser:salarypass@db:5432/salarydb
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_MODEL: llama3
+      MODEL_DIR: ml/models
+    depends_on:
+      db:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    container_name: salary-predictor-db
+    environment:
+      POSTGRES_USER: salaryuser
+      POSTGRES_PASSWORD: salarypass
+      POSTGRES_DB: salarydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U salaryuser -d salarydb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: salary-predictor-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 5 && ollama pull llama3 && wait"]
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  ollama_data:
