@@ -1,7 +1,6 @@
 ﻿import os
 import json
 import logging
-import numpy as np
 import joblib
 import pandas as pd
 
@@ -65,3 +64,4 @@ def predict(
         "model_version": _metadata.get("model_name", "unknown"),
         "num_skills": len(skills),
     }
+

@@ -92,3 +92,4 @@ async def get_model_info():
         training_samples=metadata["training_samples"],
         feature_cols=metadata["feature_cols"],
     )
+
