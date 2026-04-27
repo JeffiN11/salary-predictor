@@ -1,5 +1,4 @@
 ﻿import pytest_asyncio
-from unittest.mock import patch
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 
@@ -29,8 +28,7 @@ async def setup_db():
 @pytest_asyncio.fixture
 async def client():
     app.dependency_overrides[get_db] = override_get_db
-    with patch("app.routers.predictions.AsyncSessionLocal", TestSessionLocal):
-        transport = ASGITransport(app=app)
-        async with AsyncClient(transport=transport, base_url="http://test") as ac:
-            yield ac
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        yield ac
     app.dependency_overrides.clear()
