@@ -8,7 +8,6 @@ from app.schemas.prediction import (
     PredictionRequest,
     PredictionResponse,
     PredictionLogsResponse,
-    PredictionLogResponse,
     ModelInfoResponse,
 )
 from app.services import model_service
@@ -92,4 +91,3 @@ async def get_model_info():
         training_samples=metadata["training_samples"],
         feature_cols=metadata["feature_cols"],
     )
-
